@@ -1,5 +1,5 @@
 /*
- * Dim Screen
+ * Dim Screen by a certain percentage per click on a custom System Status Icon. 
  *
  * Based on the code from https://wiki.gnome.org/Projects/GnomeShell/Extensions/StepByStepTutorial#myFirstExtension
  *
@@ -9,59 +9,57 @@ const St = imports.gi.St; //Gobject-Introspection https://developer.gnome.org/go
 const Main = imports.ui.main; //Main.layoutManager.monitor https://developer.gnome.org/gtk3/stable/
 const Tweener = imports.ui.tweener;
 
-let text, button;
-let currentOpacity = 0;
-// get current brightness level
+// The dimming is achieved by inserting a label with null text object and with an alpha channel that
+// covers the whole screen. The text, being null, is not display, but the alpha channel remains; thus, achieving dimming. 
+var label, button;
+var currentOpacity = 0;
 
-// toggle brightness
-/*
-function _hideHello() {
-    Main.uiGroup.remove_actor(text);
-    text = null;
-}*/
-
-// reset opacity when clicked
-function _resetAndShowHello() {
-    if (currentOpacity < 100) {
-        currentOpacity = currentOpacity + 40;
-    } else {
-      currentOpacity = 0;
-    }
-
-    _showHello();
+// reset opacity to 0 and remove label 
+function reset() {
+    currentOpacity = 0;
+    Main.uiGroup.remove_actor(label); // remove label because sometimes screenshots stay dark even at 0 opacity
+    label = null;
 }
 
-// toggle brightness
-function _showHello() {
+// Increase opacity by 40 per click. Reset it if it goes over 100.
+function handleIconClick() {
+    if (currentOpacity < 100) {
+        // increase opacity
+        currentOpacity = currentOpacity + 40;
+        // update in monitor
+        update();
+    } else {
+	reset();
+    }
+}
+
+// toggle new brightness level
+function update() {
     let monitor = Main.layoutManager.primaryMonitor;
     // let monitor2 = Main.layoutManager.secondaryMonitor;
     let myText = null;
     // myText = "hi 2: " + monitor2.x;
 
-    if (!text) {
-        text = new St.Label({
-                        style_class: 'helloworld-label',
+    if (label == null) {
+        label = new St.Label({
+                        style_class: 'helloworld-label', // add CSS label
                         text: myText
                         });
-        Main.uiGroup.add_actor(text);
-    } /*else {
-        _hideHello();
-    }*/
-
+        Main.uiGroup.add_actor(label);
+    }
     global.log("DIM: currentOpacity = " + currentOpacity);
-
-    text.opacity = currentOpacity;
-
-    // show panel icon
-    text.set_position(0, 0); //override
-    text.set_width(monitor.width * 6); //simply give enough width
-    text.set_height(monitor.height * 6);
+    // set label opacity
+    label.opacity = currentOpacity;
+    // position label at 0,0 and stretch across the entire monitor
+    label.set_position(0, 0); //override
+    label.set_width(monitor.width * 6); //simply give enough width
+    label.set_height(monitor.height * 6);
 }
 
 function init() {
     global.log("test"); //https://smasue.github.io/gnome-shell-tw
 
-    button = new St.Bin({ style_class: 'panel-button',
+    button = new St.Bin({ style_class: 'panel-button', 
                           reactive: true,
                           can_focus: true,
                           x_fill: true,
@@ -73,7 +71,7 @@ function init() {
                              style_class: 'panelItem' }); //system-status-icon
     button.set_child(icon);
 
-    button.connect('button-press-event', _resetAndShowHello);
+    button.connect('button-press-event', handleIconClick);
 }
 
 function enable() {
