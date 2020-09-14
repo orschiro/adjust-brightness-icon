@@ -10,7 +10,9 @@
 
 .panelItem {
     color: #ccc;
-    width: 15px;
-    height: 15px;
+    width: 24px;
+    height: 18px;
     border-radius: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
