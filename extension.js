@@ -8,6 +8,8 @@
 const St = imports.gi.St; //Gobject-Introspection https://developer.gnome.org/gobject/stable/
 const Main = imports.ui.main; //Main.layoutManager.monitor https://developer.gnome.org/gtk3/stable/
 const Tweener = imports.tweener.tweener;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Gio = imports.gi.Gio;
 
 // The dimming is achieved by inserting a label with null text object and with an alpha channel that
 // covers the whole screen. The text, being null, is not display, but the alpha channel remains; thus, achieving dimming. 
@@ -66,9 +68,10 @@ function init() {
                           y_expand: false,
                           track_hover: true });
 
-    //usr/share/icons/gnome/scalable/actions/system-run-symbolic.svg
-    let icon = new St.Icon({ icon_name: 'dialog-information-symbolic',
-                             style_class: 'panelItem' }); //system-status-icon
+    let icon = new St.Icon({
+            gicon: Gio.icon_new_for_string(`${Me.path}/icon.svg`),
+            style_class: 'system-status-icon'
+    }); //system-status-icon
     button.set_child(icon);
 
     button.connect('button-press-event', handleIconClick);
