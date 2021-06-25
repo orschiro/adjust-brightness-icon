@@ -7,7 +7,7 @@
  */
 const St = imports.gi.St; //Gobject-Introspection https://developer.gnome.org/gobject/stable/
 const Main = imports.ui.main; //Main.layoutManager.monitor https://developer.gnome.org/gtk3/stable/
-const Tweener = imports.ui.tweener;
+const Tweener = imports.tweener.tweener;
 
 // The dimming is achieved by inserting a label with null text object and with an alpha channel that
 // covers the whole screen. The text, being null, is not display, but the alpha channel remains; thus, achieving dimming. 
