@@ -6,7 +6,10 @@
     "3.12.2",
     "3.18",
     "3.18.5",
-    "3.26.2"
+    "3.26.2",
+    "40",
+    "41",
+    "42"
   ],
   "url": "https://github.com/orschiro/adjust-brightness-icon",
   "uuid": "adjust.brightness.icon@orschiro.gmail.com",
